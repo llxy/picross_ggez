@@ -42,11 +42,44 @@ fn main() {
         dt: Duration::new(0, 0),
     };
 
-    let c = conf::Conf::new();
     let (ref mut ctx, ref mut event_loop) = ContextBuilder::new("picross", "llxy")
-        .conf(c)
+        .conf(get_conf())
         .build()
         .unwrap();
 
     event::run(ctx, event_loop, state).unwrap();
+}
+
+fn get_conf() -> conf::Conf {
+    use ggez::conf::*;
+
+    let ws = WindowSetup {
+        title: "Picross".to_owned(),
+        samples: NumSamples::Zero,
+        vsync: true,
+        transparent: false,
+        icon: "".to_owned(),
+        srgb: true,
+    };
+
+    let wm = WindowMode {
+        width: 2560.0,
+        height: 1600.0,
+        maximized: false,
+        fullscreen_type: FullscreenType::Windowed,
+        borderless: false,
+        min_width: 0.0,
+        max_width: 0.0,
+        min_height: 0.0,
+        max_height: 0.0,
+        hidpi: true,
+        resizable: false,
+    };
+
+    Conf {
+        window_mode: wm,
+        window_setup: ws,
+        backend: Backend::default(),
+        modules: ModuleConf::default(),
+    }
 }
