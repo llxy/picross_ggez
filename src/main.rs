@@ -18,15 +18,19 @@ impl EventHandler for State {
         }
         Ok(())
     }
+
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        let s = format!("Hello ggez! dt = {}ms", self.dt.subsec_millis());
+        use ggez::graphics::{DrawParam, Scale};
+        use nalgebra::Point2;
 
-        let tf = graphics::TextFragment::new(s);
-
+        let s = format!("Picross version -1\n\ndt = {}ms", self.dt.subsec_millis());
+        let tf = graphics::TextFragment::new(s).scale(Scale { x: 50.0, y: 50.0 });
         let t = graphics::Text::new(tf);
 
         graphics::clear(ctx, graphics::BLACK);
-        graphics::draw(ctx, &t, graphics::DrawParam::default())?;
+        let (tw, th) = t.dimensions(ctx);
+        let center_dest = Point2::new(1280.0 - (tw as f32 / 2.0), 800.0 - (th as f32 / 2.0));
+        graphics::draw(ctx, &t, DrawParam::default().dest(center_dest))?;
         graphics::present(ctx)?;
 
         Ok(())
