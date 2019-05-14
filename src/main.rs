@@ -1,3 +1,5 @@
+use ggez::event::EventHandler;
+use ggez::input::mouse::MouseButton;
 use ggez::*;
 use std::time::Duration;
 
@@ -8,7 +10,7 @@ struct State {
 // frame time for 30fps
 const FT30: Duration = Duration::from_nanos(33_333_333);
 
-impl ggez::event::EventHandler for State {
+impl EventHandler for State {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         self.dt = timer::delta(ctx);
         if self.dt < FT30 {
@@ -28,6 +30,10 @@ impl ggez::event::EventHandler for State {
         graphics::present(ctx)?;
 
         Ok(())
+    }
+
+    fn mouse_button_up_event(&mut self, _ctx: &mut Context, button: MouseButton, x: f32, y: f32) {
+        println!("{:?} {} {}", button, x, y)
     }
 }
 
