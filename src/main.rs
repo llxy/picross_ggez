@@ -39,7 +39,7 @@ impl EventHandler for State {
 
 fn main() {
     let state = &mut State {
-        dt: std::time::Duration::new(0, 0),
+        dt: Duration::new(0, 0),
     };
 
     let c = conf::Conf::new();
