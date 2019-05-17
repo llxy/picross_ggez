@@ -7,14 +7,10 @@ struct State {
     dt: Duration,
 }
 
-// frame time for 30fps
-const FT30: Duration = Duration::from_nanos(33_333_333);
-
 impl EventHandler for State {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-        self.dt = timer::delta(ctx);
-        if self.dt < FT30 {
-            timer::sleep(FT30 - self.dt)
+        if timer::check_update_time(ctx, 30) {
+            self.dt = timer::delta(ctx);
         }
         Ok(())
     }
