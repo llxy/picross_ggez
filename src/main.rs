@@ -16,12 +16,35 @@ impl EventHandler for State {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        use ggez::graphics::{DrawParam, Scale, Mesh, Rect, DrawMode};
+        use ggez::graphics::{DrawMode, DrawParam, Mesh, Rect, Scale};
         use nalgebra::Point2;
 
         graphics::clear(ctx, graphics::BLACK);
 
         // Draw grid
+        for i in 0..=5 {
+            let x_start = (500 - 10) as f32;
+            let x_end = (500 - 10 + 5 * 150) as f32;
+            let h_y = (300 - 10 + i * 150) as f32;
+            let h_line = Mesh::new_line(
+                ctx,
+                &[Point2::new(x_start, h_y), Point2::new(x_end, h_y)],
+                4.0,
+                graphics::WHITE,
+            )?;
+            graphics::draw(ctx, &h_line, DrawParam::default())?;
+
+            let y_start = (300 - 10) as f32;
+            let y_end = (300 - 10 + 5 * 150) as f32;
+            let v_x = (500 - 10 + i * 150) as f32;
+            let v_line = Mesh::new_line(
+                ctx,
+                &[Point2::new(v_x, y_start), Point2::new(v_x, y_end)],
+                4.0,
+                graphics::WHITE,
+            )?;
+            graphics::draw(ctx, &v_line, DrawParam::default())?;
+        }
 
         // Draw current solution
         for (r, row) in self.solution.iter().enumerate() {
@@ -65,7 +88,7 @@ impl EventHandler for State {
         for (c, hint) in self.puzzle.col_hints().iter().enumerate() {
             let tf = graphics::TextFragment::new(hint.clone()).scale(Scale { x: 50.0, y: 50.0 });
             let t = graphics::Text::new(tf);
-            let center_dest = Point2::new(550.0 + c as f32 * 150.0, 200.0);
+            let center_dest = Point2::new(550.0 + c as f32 * 150.0, 75.0);
             graphics::draw(ctx, &t, DrawParam::default().dest(center_dest))?;
         }
 
