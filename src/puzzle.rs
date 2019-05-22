@@ -18,6 +18,13 @@ impl Puzzle {
         }
     }
 
+    pub fn check(&self, solution: Vec<Vec<bool>>) -> bool {
+        let fsol = solution.into_iter().flatten().collect::<Vec<bool>>();
+        let sol_mat = DMatrix::from_vec(5, 5, fsol);
+
+        self.matrix.eq(&sol_mat)
+    }
+
     // pub fn row_hints(&self) -> &[Hint] {
     //     self.matrix.rows()
     // }
