@@ -1,30 +1,27 @@
 use ggez::event::EventHandler;
 use ggez::input::mouse::MouseButton;
 use ggez::*;
-use std::time::Duration;
 
 mod puzzle;
 use puzzle::Puzzle;
 
 struct State {
-    dt: Duration,
     puzzle: Puzzle,
     solution: Vec<Vec<bool>>,
 }
 
 impl EventHandler for State {
-    fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-        if timer::check_update_time(ctx, 30) {
-            self.dt = timer::delta(ctx);
-        }
+    fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
         Ok(())
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        use ggez::graphics::{DrawParam, Scale};
+        use ggez::graphics::{DrawParam, Scale, Mesh, Rect, DrawMode};
         use nalgebra::Point2;
 
         graphics::clear(ctx, graphics::BLACK);
+
+        // Draw grid
 
         // Draw current solution
         for (r, row) in self.solution.iter().enumerate() {
@@ -37,33 +34,24 @@ impl EventHandler for State {
                 let x = r * 150 + 500;
                 let y = c * 150 + 300;
 
-                let rect = graphics::Mesh::new_rectangle(
+                let rect = Mesh::new_rectangle(
                     ctx,
-                    graphics::DrawMode::fill(),
-                    graphics::Rect::new(x as f32, y as f32, 130.0, 130.0),
+                    DrawMode::fill(),
+                    Rect::new(x as f32, y as f32, 130.0, 130.0),
                     color,
                 )?;
-                graphics::draw(ctx, &rect, graphics::DrawParam::default())?;
+                graphics::draw(ctx, &rect, DrawParam::default())?;
             }
         }
 
         let s = if self.puzzle.check(self.solution.clone()) {
-            "Correct".to_string()
+            "Correct"
         } else {
-            format!("Picross version -1\n\ndt = {}ms", self.dt.subsec_millis())
+            "Not yet..."
         };
         let tf = graphics::TextFragment::new(s).scale(Scale { x: 50.0, y: 50.0 });
         let t = graphics::Text::new(tf);
-        // let (tw, th) = t.dimensions(ctx);
-        // let center_dest = Point2::new(1280.0 - (tw as f32 / 2.0), 800.0 - (th as f32 / 2.0));
         graphics::draw(ctx, &t, DrawParam::default())?;
-
-        // let ncols = self.solution.ncols();
-
-        // for (r, c, piece) in self.solution.iter().enumerate().map(|(n, x)| (n / ncols, n % ncols, x)) {
-        // }
-
-        // Draw hints
 
         // row hints
         for (r, hint) in self.puzzle.row_hints().iter().enumerate() {
@@ -123,7 +111,6 @@ impl EventHandler for State {
 
 fn main() {
     let state = &mut State {
-        dt: Duration::new(0, 0),
         puzzle: Puzzle::rand_new(),
         solution: init_solution(),
     };
