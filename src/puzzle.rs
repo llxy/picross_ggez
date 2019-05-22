@@ -25,7 +25,59 @@ impl Puzzle {
         self.matrix.eq(&sol_mat)
     }
 
-    // pub fn row_hints(&self) -> &[Hint] {
-    //     self.matrix.rows()
-    // }
+    pub fn row_hints(&self) -> Vec<String> {
+        let mut res = vec![];
+        for row in self.matrix.row_iter() {
+            let (mut hint, acc) = row
+                .iter()
+                .fold(("".to_string(), 0), |(hint_str, acc), piece| {
+                    if *piece {
+                        (hint_str, acc + 1)
+                    } else {
+                        let new_hint_str = if acc > 0 {
+                            hint_str + " " + &(acc.to_string())
+                        } else {
+                            hint_str
+                        };
+                        (new_hint_str, 0)
+                    }
+                });
+
+            if acc > 0 {
+                hint.push_str(&(acc.to_string()))
+            }
+
+            res.push(hint);
+        }
+
+        res
+    }
+
+    pub fn col_hints(&self) -> Vec<String> {
+        let mut res = vec![];
+        for col in self.matrix.column_iter() {
+            let (mut hint, acc) = col
+                .iter()
+                .fold(("".to_string(), 0), |(hint_str, acc), piece| {
+                    if *piece {
+                        (hint_str, acc + 1)
+                    } else {
+                        let new_hint_str = if acc > 0 {
+                            hint_str + &(acc.to_string()) + "\n"
+                        } else {
+                            hint_str
+                        };
+                        (new_hint_str, 0)
+                    }
+                });
+
+            if acc > 0 {
+                hint.push_str(&(acc.to_string()))
+            }
+
+            res.push(hint);
+        }
+
+        res
+    }
 }

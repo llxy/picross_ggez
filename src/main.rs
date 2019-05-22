@@ -22,6 +22,7 @@ impl EventHandler for State {
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         use ggez::graphics::{DrawParam, Scale};
+        use nalgebra::Point2;
 
         graphics::clear(ctx, graphics::BLACK);
 
@@ -65,8 +66,20 @@ impl EventHandler for State {
         // Draw hints
 
         // row hints
+        for (r, hint) in self.puzzle.row_hints().iter().enumerate() {
+            let tf = graphics::TextFragment::new(hint.clone()).scale(Scale { x: 50.0, y: 50.0 });
+            let t = graphics::Text::new(tf);
+            let center_dest = Point2::new(200.0, 300.0 + r as f32 * 150.0);
+            graphics::draw(ctx, &t, DrawParam::default().dest(center_dest))?;
+        }
 
         // col hints
+        for (c, hint) in self.puzzle.col_hints().iter().enumerate() {
+            let tf = graphics::TextFragment::new(hint.clone()).scale(Scale { x: 50.0, y: 50.0 });
+            let t = graphics::Text::new(tf);
+            let center_dest = Point2::new(550.0 + c as f32 * 150.0, 200.0);
+            graphics::draw(ctx, &t, DrawParam::default().dest(center_dest))?;
+        }
 
         graphics::present(ctx)?;
 
