@@ -150,7 +150,7 @@ fn get_conf() -> conf::Conf {
     use ggez::conf::*;
 
     let ws = WindowSetup {
-        title: "Picross".to_owned(),
+        title: "Picross.LLXY".to_owned(),
         samples: NumSamples::Zero,
         vsync: true,
         transparent: false,
