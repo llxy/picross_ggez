@@ -44,6 +44,7 @@ impl Puzzle {
                 });
 
             if acc > 0 {
+                hint.push_str(" ");
                 hint.push_str(&(acc.to_string()))
             }
 
