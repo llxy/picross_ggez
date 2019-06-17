@@ -6,21 +6,21 @@ type PuzzleMatrix = DMatrix<bool>;
 #[derive(Debug)]
 pub struct Puzzle {
     matrix: PuzzleMatrix,
+    size: usize,
 }
 
 impl Puzzle {
-    pub fn rand_new() -> Self {
+    pub fn rand_new(size: usize) -> Self {
         use rand::{thread_rng, Rng};
 
         let mut rng = thread_rng();
-        Self {
-            matrix: DMatrix::from_fn(5, 5, |_r, _c| rng.gen_bool(0.5)),
-        }
+        let matrix = DMatrix::from_fn(size, size, |_r, _c| rng.gen_bool(0.5));
+        Self { matrix, size }
     }
 
     pub fn check(&self, solution: Vec<Vec<bool>>) -> bool {
         let fsol = solution.into_iter().flatten().collect::<Vec<bool>>();
-        let sol_mat = DMatrix::from_vec(5, 5, fsol);
+        let sol_mat = DMatrix::from_vec(self.size, self.size, fsol);
 
         self.matrix.eq(&sol_mat)
     }
