@@ -18,11 +18,12 @@ impl EventHandler for State {
         Ok(())
     }
 
+    #[allow(clippy::unreadable_literal)]
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        use ggez::graphics::{DrawMode, DrawParam, Mesh, Rect, Scale};
+        use ggez::graphics::{Color, DrawMode, DrawParam, Mesh, Rect, Scale};
         use nalgebra::Point2;
 
-        graphics::clear(ctx, graphics::BLACK);
+        graphics::clear(ctx, Color::from_rgb_u32(0x2E3440));
 
         // Draw grid
         for i in 0..=5 {
@@ -33,7 +34,7 @@ impl EventHandler for State {
                 ctx,
                 &[Point2::new(x_start, h_y), Point2::new(x_end, h_y)],
                 4.0,
-                graphics::WHITE,
+                Color::from_rgb_u32(0x4C566A),
             )?;
             graphics::draw(ctx, &h_line, DrawParam::default())?;
 
@@ -44,7 +45,7 @@ impl EventHandler for State {
                 ctx,
                 &[Point2::new(v_x, y_start), Point2::new(v_x, y_end)],
                 4.0,
-                graphics::WHITE,
+                Color::from_rgb_u32(0x4C566A),
             )?;
             graphics::draw(ctx, &v_line, DrawParam::default())?;
         }
@@ -52,26 +53,25 @@ impl EventHandler for State {
         // Draw current solution
         for (r, row) in self.solution.iter().enumerate() {
             for (c, piece) in row.iter().enumerate() {
-                let color = match piece {
-                    true => graphics::WHITE,
-                    false => graphics::BLACK,
-                };
+                if *piece {
+                    let cl = Color::from_rgb_u32(0xD8DEE9);
 
-                let x = r as i32 * SIZE + 500;
-                let y = c as i32 * SIZE + 300;
+                    let x = r as i32 * SIZE + 500;
+                    let y = c as i32 * SIZE + 300;
 
-                let rect = Mesh::new_rectangle(
-                    ctx,
-                    DrawMode::fill(),
-                    Rect::new(
-                        x as f32,
-                        y as f32,
-                        (SIZE - BORDER) as f32,
-                        (SIZE - BORDER) as f32,
-                    ),
-                    color,
-                )?;
-                graphics::draw(ctx, &rect, DrawParam::default())?;
+                    let rect = Mesh::new_rectangle(
+                        ctx,
+                        DrawMode::fill(),
+                        Rect::new(
+                            x as f32,
+                            y as f32,
+                            (SIZE - BORDER) as f32,
+                            (SIZE - BORDER) as f32,
+                        ),
+                        cl,
+                    )?;
+                    graphics::draw(ctx, &rect, DrawParam::default().color(cl))?;
+                }
             }
         }
 
