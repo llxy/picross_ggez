@@ -146,8 +146,6 @@ impl EventHandler for State {
                 self.solution[rs][cs] = !self.solution[rs][cs];
             }
         }
-
-        // println!("{:?} {} {}", button, ix, iy)
     }
 }
 
