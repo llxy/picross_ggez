@@ -5,7 +5,7 @@ type PuzzleMatrix = DMatrix<bool>;
 
 #[derive(Debug)]
 pub struct Puzzle {
-    pub matrix: PuzzleMatrix,
+    matrix: PuzzleMatrix,
 }
 
 impl Puzzle {
