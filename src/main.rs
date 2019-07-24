@@ -1,6 +1,11 @@
 use ggez::event::EventHandler;
 use ggez::input::mouse::MouseButton;
 use ggez::*;
+use ron::ser::{to_string_pretty, PrettyConfig};
+use std::error::Error;
+use std::fs::File;
+use std::io::prelude::*;
+use std::path::Path;
 
 mod puzzle;
 use puzzle::Puzzle;
@@ -12,7 +17,7 @@ struct State {
 
 const PUZZLE_SIZE: usize = 8;
 
-const PIECE_SIZE: i32 = 100;
+const PIECE_SIZE: i32 = 80;
 const BORDER: i32 = 20;
 
 impl EventHandler for State {
@@ -170,14 +175,13 @@ fn get_conf() -> conf::Conf {
         title: "Picross.LLXY".to_owned(),
         samples: NumSamples::Zero,
         vsync: true,
-        transparent: false,
         icon: "".to_owned(),
         srgb: true,
     };
 
     let wm = WindowMode {
         width: 1600.0,
-        height: 1200.0,
+        height: 1000.0,
         maximized: false,
         fullscreen_type: FullscreenType::Windowed,
         borderless: false,
@@ -185,16 +189,37 @@ fn get_conf() -> conf::Conf {
         max_width: 0.0,
         min_height: 0.0,
         max_height: 0.0,
-        hidpi: true,
         resizable: false,
     };
 
-    Conf {
+    let conf = Conf {
         window_mode: wm,
         window_setup: ws,
         backend: Backend::default(),
         modules: ModuleConf::default(),
-    }
+    };
+
+    let pretty = PrettyConfig::new()
+        .with_depth_limit(2)
+        .with_separate_tuple_members(true)
+        .with_enumerate_arrays(true);
+    let s = to_string_pretty(&conf, pretty).expect("Serialization failed");
+
+    let path = Path::new("config.ron");
+    let display = path.display();
+
+    // Open a file in write-only mode, returns `io::Result<File>`
+    let mut file = match File::create(&path) {
+        Err(why) => panic!("couldn't create {}: {}", display, why.description()),
+        Ok(file) => file,
+    };
+
+    match file.write_all(s.as_bytes()) {
+        Err(why) => panic!("couldn't write to {}: {}", display, why.description()),
+        Ok(_) => println!("successfully wrote to {}", display),
+    };
+
+    conf
 }
 
 fn init_solution(size: usize) -> Vec<Vec<bool>> {
