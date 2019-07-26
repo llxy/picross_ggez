@@ -1,4 +1,4 @@
-use ggez::event::EventHandler;
+use ggez::event::{EventHandler, KeyCode, KeyMods};
 use ggez::input::mouse::MouseButton;
 use ggez::*;
 use ron::ser::{to_string_pretty, PrettyConfig};
@@ -10,7 +10,7 @@ use std::path::Path;
 mod puzzle;
 use puzzle::Puzzle;
 
-struct State {
+struct Picross {
     puzzle: Puzzle,
     solution: Vec<Vec<bool>>,
 }
@@ -20,7 +20,7 @@ const PUZZLE_SIZE: usize = 8;
 const PIECE_SIZE: i32 = 80;
 const BORDER: i32 = 20;
 
-impl EventHandler for State {
+impl EventHandler for Picross {
     fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
         Ok(())
     }
@@ -152,10 +152,17 @@ impl EventHandler for State {
             }
         }
     }
+
+    fn key_down_event(&mut self, _ctx: &mut Context, keycode: KeyCode, _: KeyMods, _repeat: bool) {
+        if keycode == KeyCode::R {
+            self.puzzle = Puzzle::rand_new(PUZZLE_SIZE);
+            self.solution = init_solution(PUZZLE_SIZE);
+        }
+    }
 }
 
 fn main() {
-    let state = &mut State {
+    let picross = &mut Picross {
         puzzle: Puzzle::rand_new(PUZZLE_SIZE),
         solution: init_solution(PUZZLE_SIZE),
     };
@@ -165,7 +172,7 @@ fn main() {
         .build()
         .unwrap();
 
-    event::run(ctx, event_loop, state).unwrap();
+    event::run(ctx, event_loop, picross).unwrap();
 }
 
 fn get_conf() -> conf::Conf {
