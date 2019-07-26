@@ -1,4 +1,4 @@
-use ggez::event::{EventHandler, KeyCode, KeyMods};
+use ggez::event::{quit, EventHandler, KeyCode, KeyMods};
 use ggez::input::mouse::MouseButton;
 use ggez::*;
 use ron::ser::{to_string_pretty, PrettyConfig};
@@ -153,26 +153,32 @@ impl EventHandler for Picross {
         }
     }
 
-    fn key_down_event(&mut self, _ctx: &mut Context, keycode: KeyCode, _: KeyMods, _repeat: bool) {
-        if keycode == KeyCode::R {
-            self.puzzle = Puzzle::rand_new(PUZZLE_SIZE);
-            self.solution = init_solution(PUZZLE_SIZE);
+    fn key_down_event(&mut self, ctx: &mut Context, keycode: KeyCode, _: KeyMods, _repeat: bool) {
+        if keycode == KeyCode::R {}
+
+        match keycode {
+            KeyCode::R => {
+                self.puzzle = Puzzle::rand_new(PUZZLE_SIZE);
+                self.solution = init_solution(PUZZLE_SIZE);
+            }
+            KeyCode::Escape => quit(ctx),
+            _ => {}
         }
     }
 }
 
 fn main() {
+    let (ctx, eloop) = &mut ContextBuilder::new("picross", "llxy")
+        .conf(get_conf())
+        .build()
+        .unwrap();
+
     let picross = &mut Picross {
         puzzle: Puzzle::rand_new(PUZZLE_SIZE),
         solution: init_solution(PUZZLE_SIZE),
     };
 
-    let (ref mut ctx, ref mut event_loop) = ContextBuilder::new("picross", "llxy")
-        .conf(get_conf())
-        .build()
-        .unwrap();
-
-    event::run(ctx, event_loop, picross).unwrap();
+    event::run(ctx, eloop, picross).unwrap();
 }
 
 fn get_conf() -> conf::Conf {
