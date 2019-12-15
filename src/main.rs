@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 use ggez::event::{quit, EventHandler, KeyCode, KeyMods};
 use ggez::input::mouse::MouseButton;
 use ggez::*;
